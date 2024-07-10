@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ABC Analysis Web App</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="app">
+        <h1>ABC Analysis</h1>
+        <div id="controls">
+            <button id="sort-name" title="Sort channels by name">Sort by Name</button>
+            <button id="sort-value" title="Sort channels by value">Sort by Value</button>
+            <input type="text" id="filter-input" placeholder="Filter by name" title="Filter channels by name">
+        </div>
+        <div id="grid-container"></div>
+        <div>
+            <input type="text" id="channel-input" placeholder="Enter channel data">
+            <button id="add-channel" title="Add a new channel in the format 'itemName: value'">Add Channel</button>
+        </div>
+        <button id="calculate" title="Calculate ABC analysis based on the added channels">Calculate</button>
+        <div>
+            <label for="category-select">Select Category:</label>
+            <select id="category-select" title="Filter channels by category">
+                <option value="All">All</option>
+                <option value="A">A</option>
+                <option value="B">B</option>
+                <option value="C">C</option>
+            </select>
+        </div>
+    </div>
+    <!-- Modal for confirming deletion -->
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <p id="modal-text">Are you sure you want to delete this channel?</p>
+            <button id="confirm-delete">Yes, delete</button>
+            <button id="cancel-delete">Cancel</button>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
