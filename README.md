@@ -1,7 +1,3 @@
-# ABC-Analysis-WEB-APP
-This repository is what I made from the knowledge I got from freeCodeCamp.
-
-
 # ABC Analysis Web App
 
 This repository is what I made from the knowledge I got from freeCodeCamp.
