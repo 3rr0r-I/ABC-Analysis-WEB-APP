@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>ABC Analysis</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1>ABC Analysis</h1>
+    <form id="dataForm">
+        <table>
+            <thead>
+                <tr>
+                    <th>Section</th>
+                    <th>Unit Cost</th>
+                    <th>Annual Demand</th>
+                </tr>
+            </thead>
+            <tbody id="table1Body">
+                <!-- JavaScript will dynamically add rows here -->
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td>Total</td>
+                    <td id="totalUnitCost"></td>
+                    <td id="totalAnnualDemand"></td>
+                </tr>
+            </tfoot>
+        </table>
+        <button type="button" onclick="submitData()">Submit</button>
+    </form>
+    <div id="results">
+        <!-- JavaScript will display the results here -->
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const sections = 9; // Assuming 9 sections from the provided PDF
+            const tableBody = document.getElementById('table1Body');
+            for (let i = 1; i <= sections; i++) {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${i}</td>
+                    <td><input type="number" name="unit_cost" required></td>
+                    <td><input type="number" name="annual_demand" required></td>
+                `;
+                tableBody.appendChild(row);
+            }
+        });
+
+        function submitData() {
+            const unitCostInputs = document.getElementsByName('unit_cost');
+            const annualDemandInputs = document.getElementsByName('annual_demand');
+            const unitCost = Array.from(unitCostInputs).map(input => parseFloat(input.value));
+            const annualDemand = Array.from(annualDemandInputs).map(input => parseFloat(input.value));
+            
+            fetch('/calculate', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ unit_cost: unitCost, annual_demand: annualDemand })
+            })
+            .then(response => response.json())
+            .then(data => {
+                displayResults(data);
+            });
+        }
+
+        function displayResults(data) {
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = `
+                <h2>Table 2</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Total Value</th>
+                            <th>% Total Value</th>
+                            <th>Sequence</th>
+                            <th>Cumulative Volume %</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${data.table2.total_values.map((val, i) => `
+                            <tr>
+                                <td>${val}</td>
+                                <td>${data.table2.total_value_percentage[i].toFixed(2)}</td>
+                                <td>${data.table2.sequence[i] + 1}</td>
+                                <td>${data.table2.cumulative_volume_percentage[i].toFixed(2)}</td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+                
+                <h2>Table 3</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Fragment</th>
+                            <th>% Volume</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${data.table3.fragments.map((fragment, i) => `
+                            <tr>
+                                <td>${fragment}</td>
+                                <td>${data.table3.volume_percentage[i].toFixed(2)}</td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+                
+                <h2>Table 4</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Group</th>
+                            <th>Parts</th>
+                            <th>% Total Group Value</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${data.table4.map(group => `
+                            <tr>
+                                <td>${group.Group}</td>
+                                <td>${group.Parts.join(', ')}</td>
+                                <td>${group['Total Value %'].toFixed(2)}</td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+        }
+    </script>
+</body>
+</html>
